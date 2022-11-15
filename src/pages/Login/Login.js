@@ -1,11 +1,28 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from "react-hook-form";
-import {Link} from 'react-router-dom'
+import {Link,useLocation,useNavigate} from 'react-router-dom'
+import { AuthContext } from '../../contexts/AuthProvider';
 const Login = () => {
-    const { register, formState:{errors}, handleSubmit } = useForm();
+    const { register, formState: { errors }, handleSubmit } = useForm();
+    const [loginError, setLoginError] = useState('');
+    const { login } = useContext(AuthContext)
+    const location = useLocation()
+    const navigate = useNavigate();
+
+    const  from = location.state?.from?.pathname || "/";
 
     const handleLogin = data => {
-         console.log(data)
+        console.log(data)
+        login(data.email, data.password)
+            .then(result => {
+                setLoginError('')
+                const user = result.user;
+                console.log(user)
+                navigate(from, { replace: true });
+            })
+            .catch(error => {
+            setLoginError(error.message)
+        })
      }
 
     return (
@@ -32,6 +49,9 @@ const Login = () => {
                     </label>
                             {errors.password && <p className='text-red-600'>{errors.password?.message}</p>}
                    
+                    </div>
+                    <div>
+                        {loginError && <p className='text-red-600'>{loginError }</p>}
                     </div>
               
                     <input className='btn btn-accent w-full' value='login' type="submit" />
