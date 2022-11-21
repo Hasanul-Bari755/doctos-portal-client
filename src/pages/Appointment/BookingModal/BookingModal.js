@@ -3,9 +3,10 @@ import { format } from 'date-fns';
 import { AuthContext } from '../../../contexts/AuthProvider';
 
 import toast from 'react-hot-toast';
-const BookingModal = ({ treatment,setTreatment, selectedDate,refetch }) => {
+const BookingModal = ({ treatment, setTreatment, selectedDate, refetch }) => {
+ 
     
-    const { name, slots } = treatment; //treatment is appointment options
+    const { name, slots,price } = treatment; //treatment is appointment options
    
     const date = format(selectedDate, 'PP')
     const {user} =  useContext(AuthContext)
@@ -19,14 +20,15 @@ const BookingModal = ({ treatment,setTreatment, selectedDate,refetch }) => {
         const phone = form.phone.value;
 
         const booking = {
-            appintmentDate: date,
+            appointmentDate: date,
             treatment: treatment.name,
             patient: name,
             slot,
             email,
-            phone
+            phone,
+            price
         }
-   
+        console.log(booking)
         fetch('http://localhost:5000/bookings', {
             method: 'POST',
             headers: {
